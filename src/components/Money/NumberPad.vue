@@ -1,33 +1,72 @@
 <template>
   <div class="numberPad">
-    <div class="output">100</div>
+    <div class="output">{{ output }}</div>
     <div class="buttons">
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>删除</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>清空</button>
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <button class="ok">OK</button>
-      <button class="zero">0</button>
-      <button>.</button>
+      <button @click="inputContent">1</button>
+      <button @click="inputContent">2</button>
+      <button @click="inputContent">3</button>
+      <button @click="remove">删除</button>
+      <button @click="inputContent">4</button>
+      <button @click="inputContent">5</button>
+      <button @click="inputContent">6</button>
+      <button @click="clear">清空</button>
+      <button @click="inputContent">7</button>
+      <button @click="inputContent">8</button>
+      <button @click="inputContent">9</button>
+      <button @click="ok" class="ok">OK</button>
+      <button class="zero" @click="inputContent">0</button>
+      <button @click="inputContent">.</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-export default {
+import Vue from 'vue'
+import {Component} from 'vue-property-decorator'
+
+@Component
+export default class NumberPad extends Vue {
   name: 'NumberPad'
+  output: string = '0'
+
+  inputContent(event: MouseEvent) {
+    const button = (event.target as HTMLButtonElement)
+    //as HTMLButtonElement强制指定内容}
+    const input = button.textContent!
+    //! 不会为空
+    if (this.output.length === 16) {
+      return
+    }
+    if (this.output === '0') {
+      if ('0123456789'.indexOf(input) >= 0) {//根据input检索第0个开始有没有包含0123456789，如果有就替换
+        this.output = input
+      } else {//如果不是的话，就剩下一个.符号就加上
+        this.output += input
+      }
+      return
+    }
+    if (this.output.indexOf('.') >= 0 && input === '.') {
+      return
+    }
+    this.output += input
+  }
+  remove(){
+    if(this.output.length === 1){
+      this.output = '0'
+    }else {
+      this.output = this.output.slice(0,-1)
+    }
+  }
+  clear(){
+    this.output ='0'
+  }
+  ok(){}
 }
 </script>
 
 <style lang="scss" scoped>
 @import "~@/assets/style/helper.scss";
+
 .numberPad {
   .output {
     @extend %clearFix;
@@ -36,6 +75,7 @@ export default {
     font-family: Consolas, monospace;
     text-align: right;
     padding: 9px 16px;
+    height: 72px;
   }
 
   .buttons {
