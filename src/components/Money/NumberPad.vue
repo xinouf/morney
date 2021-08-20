@@ -63,6 +63,9 @@ export default class NumberPad extends Vue {
   }
   ok(){
     this.$emit('update:value',this.output)
+    this.$emit('submit')//提交数据事件，和上面的值变化区分
+    /*this.output = this.value.toString() *///把output变为初始值，置空，不能这样写，this.$emit('update:value',this.output)已经把value改了
+    this.output = '0'//把output置空
   }
 }
 </script>

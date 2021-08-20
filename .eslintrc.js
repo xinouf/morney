@@ -20,7 +20,8 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-inferrable-types':"off",
     '@typescript-eslint/explicit-module-boundary-types':"off",
-    '@typescript-eslint/no-non-null-assertion':"off"
+    '@typescript-eslint/no-non-null-assertion':"off",
+    '@typescript-eslint/no-unused-vars:':"off"
 
   },
   overrides: [
