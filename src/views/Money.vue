@@ -1,14 +1,14 @@
 <template>
   <Layout class-prefix="layout"> <!--当看到classPrefix时，里面会有一些可以控制的css，但是不希望一个一个的传给他-->
-    {{ recordList }}
     <NumberPad :value.sync="record.amount" @submit="saveRecord"/>
     <!--    叫x,那触发的事件就叫@update:x-->
     <!--    <NumberPad :value="record.amount" @update:value="onUpdateAmount"/>-->
     <Types :value.sync="record.type"/>
     <!--    <Types :value="record.type" @update:value="onUpdateType"/>同上-->
     <!--    :value="record.type" 把默认的type值传给子组件，保持子组件和父亲的默认值一致，然后把子组件的type默认值删掉-->
-    <Notes @update:value="onUpdateNotes"/>
+    <div class="notes"><FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateNotes"/></div>
     <Tags :data-source.sync="tags" @update:value="onUpdateTags"/>
+<!--    data-source代表props-->
   </Layout>
 </template>
 
@@ -16,14 +16,21 @@
 import Vue from 'vue'
 import NumberPad from '@/components/Money/NumberPad.vue'
 import Tags from '@/components/Money/Tags.vue'
-import Notes from '@/components/Money/Notes.vue'
+import FormItem from '@/components/Money/FormItem.vue'
 import Types from '@/components/Money/Types.vue'
 import {Component, Watch} from 'vue-property-decorator'
+import recordListModel from '@/models/recordListModel'
+import tagListModel from '@/models/tagListModel'
+/*const model = require('@/model.js').model;*///如何用ts和js配合，用require,等同于下面的写法
+/*const {model} = require('@/model.js');*//*model为js的写法*/
 
 //数据迁移
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const version = window.localStorage.getItem('version') || '0'
-const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]')
+/*const recordList: Record[] =model.fetch()/!*model为js的写法*!/*/
+const recordList = recordListModel.fetch()
+const tagList = tagListModel.fetch()
+    /*const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]')*/
 
 /*if (version < '0.0.2') {
   if (version === '0.0.1') {
@@ -38,21 +45,15 @@ const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList'
 //保存完了之后，把版本号置为0.0.2
 window.localStorage.setItem('version', '0.0.2')*/
 
-type Record = {//类型声明，不需要告诉值
-  tags: string[]//可以在tags后面加个？：tags？，这样下面的tag就不用声明
-  notes: string
-  type: string
-  amount: number//数据类型
-  createdAt?: Date//类/构造函数  创建时间
-}/*不用声明，下面的可以反推，但最好不要省*/
-
-@Component({components: {Types, Notes, Tags, NumberPad}})//告诉下面的是组件
+@Component({components: {Types, FormItem, Tags, NumberPad}})//告诉下面的是组件
 export default class Money extends Vue {
   name = 'Money'
-  tags = ['衣', '食', '住', '行']
-  record: Record = {tags: [], notes: '', type: '-', amount: 0}
+  tags = tagList;
+  // eslint-disable-next-line no-undef
+  record: RecordItem = {tags: [], notes: '', type: '-', amount: 0}
 
-  recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]')//默认给个空数组JSON.parse，把JSON对象转为Object赋值给数组？？
+  // eslint-disable-next-line no-undef
+  recordList: RecordItem[] = recordList//默认给个空数组JSON.parse，把JSON对象转为Object赋值给数组？？
   //把记录保存
   /*recode ={tags:[],note:'',type:'-',amount:'0'};不用声明，下面的可以反推，但最好不要省*/
   onUpdateTags(value: string[]) {
@@ -71,13 +72,15 @@ export default class Money extends Vue {
       this.record.amount = parseFloat(value);
     }*/
   saveRecord() {
-    const deepClone: Record = JSON.parse(JSON.stringify(this.record))
+    // eslint-disable-next-line no-undef
+    const deepClone: RecordItem = recordListModel.clone(this.record)
     deepClone.createdAt = new Date()
     this.recordList.push(deepClone)//地址不变，所以push进去还是原来的东西，所以得深拷贝赋值给新的参数
   }
 
   @Watch('recordList') onRecordListChange() {
-    window.localStorage.setItem('recordList', JSON.stringify(this.recordList))//JSON.stringify把object变成字符串
+    recordListModel.save(this.recordList)
+   /* window.localStorage.setItem('recordList', JSON.stringify(this.recordList))//JSON.stringify把object变成字符串*/
   }
 }
 </script>
@@ -89,5 +92,7 @@ export default class Money extends Vue {
 </style>
 <style lang="scss" scoped>
 @import "~@/assets/style/helper.scss";
-
+.notes {
+padding: 6px 0;
+}
 </style>

@@ -18,7 +18,7 @@ import {Component, Prop} from 'vue-property-decorator'
 
 @Component//告诉下面的是组件
 export default class Tags extends Vue {
-  name= 'Tags'
+  name = 'Tags'
   @Prop(Array) readonly dataSource: string[] | undefined
   selectedTags: string[] = []
 
@@ -28,20 +28,22 @@ export default class Tags extends Vue {
 
     if (this.selectedTags.length === 0) {
       this.selectedTags.push(tag)
-    } else if(index >= 0){//匹配成功
-        this.selectedTags.splice(index, 1)
-    }else{
+    } else if (index >= 0) {//匹配成功
+      this.selectedTags.splice(index, 1)
+    } else {
       this.selectedTags.splice(index, 1)
       this.selectedTags.push(tag)
     }
-    this.$emit('update:value',this.selectedTags)
+    this.$emit('update:value', this.selectedTags)
   }
 
 
-  create(){
+  create() {
     const name = window.prompt('请输入标签名')
-    if(name === ''){window.alert('标签名不能为空')}else if(this.dataSource) {
-      this.$emit('update:dataSource',[...this.dataSource,name])
+    if (name === '') {
+      window.alert('标签名不能为空')
+    } else if (this.dataSource) {
+      this.$emit('update:dataSource', [...this.dataSource, name])
     }
   }
 }
@@ -51,6 +53,7 @@ export default class Tags extends Vue {
 @import "~@/assets/style/helper.scss";
 
 .tags {
+  background: white;
   flex-grow: 1;
   font-size: 14px;
   padding: 16px;
