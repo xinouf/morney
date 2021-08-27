@@ -10,7 +10,7 @@
       <FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateNotes"/>
     </div>
     <Tags :data-source.sync="tags" @update:value="onUpdateTags"/>
-<!--    data-source代表props-->
+    <!--    data-source代表props-->
   </Layout>
 </template>
 
@@ -32,7 +32,7 @@ const version = window.localStorage.getItem('version') || '0'
 /*const recordList: Record[] =model.fetch()/!*model为js的写法*!/*/
 const recordList = recordListModel.fetch()
 const tagList = tagListModel.fetch()
-    /*const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]')*/
+/*const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]')*/
 
 /*if (version < '0.0.2') {
   if (version === '0.0.1') {
@@ -74,15 +74,12 @@ export default class Money extends Vue {
       this.record.amount = parseFloat(value);
     }*/
   saveRecord() {
-    // eslint-disable-next-line no-undef
-    const deepClone: RecordItem = recordListModel.clone(this.record)
-    deepClone.createdAt = new Date()
-    this.recordList.push(deepClone)//地址不变，所以push进去还是原来的东西，所以得深拷贝赋值给新的参数
+    recordListModel.create(this.record)
   }
 
   @Watch('recordList') onRecordListChange() {
-    recordListModel.save(this.recordList)
-   /* window.localStorage.setItem('recordList', JSON.stringify(this.recordList))//JSON.stringify把object变成字符串*/
+    recordListModel.save()
+    /* window.localStorage.setItem('recordList', JSON.stringify(this.recordList))//JSON.stringify把object变成字符串*/
   }
 }
 </script>
@@ -94,7 +91,8 @@ export default class Money extends Vue {
 </style>
 <style lang="scss" scoped>
 @import "~@/assets/style/helper.scss";
+
 .notes {
-padding: 6px 0;
+  padding: 6px 0;
 }
 </style>
