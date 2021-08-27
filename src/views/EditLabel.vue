@@ -8,7 +8,7 @@
     <div class="form-wrapper">
     <FormItem
         :value="tag.name"
-        @update:value="updateTag"
+        ssh-keygen -t rsa -C "your_email@example.com"@update:value="updateTag"
         field-name="标签名"
         placeholder="请输入标签名"/>
     </div>
