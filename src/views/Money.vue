@@ -1,12 +1,15 @@
 <template>
   <Layout class-prefix="layout"> <!--当看到classPrefix时，里面会有一些可以控制的css，但是不希望一个一个的传给他-->
+    {{recordList}}
     <NumberPad :value.sync="record.amount" @submit="saveRecord"/>
     <!--    叫x,那触发的事件就叫@update:x-->
     <!--    <NumberPad :value="record.amount" @update:value="onUpdateAmount"/>-->
     <Types :value.sync="record.type"/>
     <!--    <Types :value="record.type" @update:value="onUpdateType"/>同上-->
     <!--    :value="record.type" 把默认的type值传给子组件，保持子组件和父亲的默认值一致，然后把子组件的type默认值删掉-->
-    <div class="notes"><FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateNotes"/></div>
+    <div class="notes">
+      <FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateNotes"/>
+    </div>
     <Tags :data-source.sync="tags" @update:value="onUpdateTags"/>
 <!--    data-source代表props-->
   </Layout>

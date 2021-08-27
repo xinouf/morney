@@ -10,7 +10,7 @@ import Vue from 'vue'
 import {Component} from 'vue-property-decorator'
 @Component
 export default class Button extends Vue {
-  name: 'Button'
+  name='Button'
 }
 </script>
 
