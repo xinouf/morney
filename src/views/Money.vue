@@ -1,6 +1,5 @@
 <template>
   <Layout class-prefix="layout"> <!--当看到classPrefix时，里面会有一些可以控制的css，但是不希望一个一个的传给他-->
-    {{recordList}}
     <NumberPad :value.sync="record.amount" @submit="saveRecord"/>
     <!--    叫x,那触发的事件就叫@update:x-->
     <!--    <NumberPad :value="record.amount" @update:value="onUpdateAmount"/>-->
