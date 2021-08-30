@@ -6,11 +6,11 @@
       <span class="rightIcon"></span>
     </div>
     <div class="form-wrapper">
-    <FormItem
-        :value="tag.name"
-        @update:value="update"
-        field-name="标签名"
-        placeholder="请输入标签名"/>
+      <FormItem
+          :value="tag.name"
+          @update:value="update"
+          field-name="标签名"
+          placeholder="请输入标签名"/>
     </div>
     <div class="button-wrapper">
       <Button @click="remove">删除标签</Button>
@@ -22,46 +22,44 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component} from 'vue-property-decorator'
-import tagListModel from '@/models/tagListModel'
 import FormItem from '@/components/Money/FormItem.vue'
 import Button from '@/components/Button.vue'
+import store from "@/store/index2";
 
 @Component({
   components: {Button, FormItem}
 })
 export default class EditLabel extends Vue {
-  name= 'EditLabel'
-  tag?:{id:string, name:string} = undefined
+  name = 'EditLabel'
+  // eslint-disable-next-line no-undef
+  tag?: Tag = undefined
 
   created() {
-    const id = this.$route.params.id
-    tagListModel.fetch()
-    const tags = tagListModel.data
-    const tag = tags.filter(t => t.id === id)[0]
-    if (tag) {
-      this.tag = tag
-    } else {
+    this.tag = store.findTag(this.$route.params.id)
+    if (!this.tag) {
       this.$router.replace('/404')//用push回退不了
       /*$route获取路由的信息的，$router是路由器转发等操作*/
     }
 
   }
-  update(name:string){
-    if(this.tag){
-      tagListModel.update(this.tag.id,name)
+
+  update(name: string) {
+    if (this.tag) {
+      store.updateTag(this.tag.id, name)
     }
   }
-  remove(){
-    if(this.tag){
-      if(tagListModel.remove(this.tag.id)){
+
+  remove() {
+    if (this.tag) {
+      if (store.removeTag(this.tag.id)) {
         this.$router.back()
-      }else {
+      } else {
         window.alert('删除失败')
       }
-
     }
   }
-  goBack(){
+
+  goBack() {
     this.$router.back()
   }
 }
@@ -91,11 +89,13 @@ export default class EditLabel extends Vue {
     height: 20px;
   }
 }
+
 .form-wrapper {
   margin-top: 8px;
   background: white;
 
 }
+
 .button-wrapper {
   text-align: center;
   padding: 16px;

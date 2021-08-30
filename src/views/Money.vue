@@ -9,7 +9,7 @@
     <div class="notes">
       <FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateNotes"/>
     </div>
-    <Tags :data-source.sync="tags" @update:value="onUpdateTags"/>
+    <Tags/>
     <!--    data-source代表props-->
   </Layout>
 </template>
@@ -20,9 +20,8 @@ import NumberPad from '@/components/Money/NumberPad.vue'
 import Tags from '@/components/Money/Tags.vue'
 import FormItem from '@/components/Money/FormItem.vue'
 import Types from '@/components/Money/Types.vue'
-import {Component, Watch} from 'vue-property-decorator'
-import recordListModel from '@/models/recordListModel'
-import tagListModel from '@/models/tagListModel'
+import {Component} from 'vue-property-decorator'
+import store from '@/store/index'
 /*const model = require('@/model.js').model;*///如何用ts和js配合，用require,等同于下面的写法
 /*const {model} = require('@/model.js');*//*model为js的写法*/
 
@@ -30,8 +29,6 @@ import tagListModel from '@/models/tagListModel'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const version = window.localStorage.getItem('version') || '0'
 /*const recordList: Record[] =model.fetch()/!*model为js的写法*!/*/
-const recordList = recordListModel.fetch()
-const tagList = tagListModel.fetch()
 /*const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]')*/
 
 /*if (version < '0.0.2') {
@@ -47,21 +44,21 @@ const tagList = tagListModel.fetch()
 //保存完了之后，把版本号置为0.0.2
 window.localStorage.setItem('version', '0.0.2')*/
 
-@Component({components: {Types, FormItem, Tags, NumberPad}})//告诉下面的是组件
+@Component({components: {Types, FormItem, Tags, NumberPad},
+computed:{
+  recordList(){
+    return  this.$store2.recordList
+  }
+}})//告诉下面的是组件
 export default class Money extends Vue {
   name = 'Money'
-  tags = tagList;
   // eslint-disable-next-line no-undef
   record: RecordItem = {tags: [], notes: '', type: '-', amount: 0}
 
   // eslint-disable-next-line no-undef
-  recordList: RecordItem[] = recordList//默认给个空数组JSON.parse，把JSON对象转为Object赋值给数组？？
+  //默认给个空数组JSON.parse，把JSON对象转为Object赋值给数组？？
   //把记录保存
   /*recode ={tags:[],note:'',type:'-',amount:'0'};不用声明，下面的可以反推，但最好不要省*/
-  onUpdateTags(value: string[]) {
-    this.record.tags = value
-  }
-
   onUpdateNotes(value: string) {
     this.record.notes = value
   }
@@ -74,13 +71,9 @@ export default class Money extends Vue {
       this.record.amount = parseFloat(value);
     }*/
   saveRecord() {
-    recordListModel.create(this.record)
+    this.$store2.createRecord(this.record)
   }
 
-  @Watch('recordList') onRecordListChange() {
-    recordListModel.save()
-    /* window.localStorage.setItem('recordList', JSON.stringify(this.recordList))//JSON.stringify把object变成字符串*/
-  }
 }
 </script>
 <style lang="scss">
