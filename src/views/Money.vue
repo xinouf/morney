@@ -21,57 +21,23 @@ import Tags from '@/components/Money/Tags.vue'
 import FormItem from '@/components/Money/FormItem.vue'
 import Types from '@/components/Money/Types.vue'
 import {Component} from 'vue-property-decorator'
-import store from '@/store/index'
-/*const model = require('@/model.js').model;*///如何用ts和js配合，用require,等同于下面的写法
-/*const {model} = require('@/model.js');*//*model为js的写法*/
 
-//数据迁移
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const version = window.localStorage.getItem('version') || '0'
-/*const recordList: Record[] =model.fetch()/!*model为js的写法*!/*/
-/*const recordList: Record[] = JSON.parse(window.localStorage.getItem('recordList') || '[]')*/
 
-/*if (version < '0.0.2') {
-  if (version === '0.0.1') {
-    //数据库升级
-    recordList.forEach(record =>{
-      record.createdAt = new Date(2021,1,1)
-    })
-    //保存数据 Rails框架里面学的
-    window.localStorage.setItem('recordList', JSON.stringify(recordList))
-  }
-}
-//保存完了之后，把版本号置为0.0.2
-window.localStorage.setItem('version', '0.0.2')*/
 
-@Component({components: {Types, FormItem, Tags, NumberPad},
-computed:{
-  recordList(){
-    return  this.$store2.recordList
-  }
-}})//告诉下面的是组件
+@Component({components: {Types, FormItem, Tags, NumberPad}})
 export default class Money extends Vue {
-  name = 'Money'
+get recordList(){
+  return  this.$store.state.recordList
+}
   // eslint-disable-next-line no-undef
   record: RecordItem = {tags: [], notes: '', type: '-', amount: 0}
 
-  // eslint-disable-next-line no-undef
-  //默认给个空数组JSON.parse，把JSON对象转为Object赋值给数组？？
-  //把记录保存
-  /*recode ={tags:[],note:'',type:'-',amount:'0'};不用声明，下面的可以反推，但最好不要省*/
   onUpdateNotes(value: string) {
     this.record.notes = value
   }
-
-  /*  onUpdateType(value:string){
-      this.record.type = value;
-    }*/
-
-  /*  onUpdateAmount(value:string){
-      this.record.amount = parseFloat(value);
-    }*/
   saveRecord() {
-    this.$store2.createRecord(this.record)
+    this.$store.commit('createRecord', this.record)
   }
 
 }

@@ -1,9 +1,11 @@
 <template>
   <div>
     <ul class="types">
-      <li :class="value === '-' && 'selected'" @click="selectType('-')">支出</li>
+      <li
+          :class="{[classPrefix+'-item']:classPrefix,selected: value==='-'}"
+          @click="selectType('-')">支出</li>
       <!--如果type是-的话，则class为selected-->
-      <li :class="value === '+' && 'selected'" @click="selectType('+')">收入</li>
+      <li  :class="{[classPrefix+'-item']:classPrefix,selected: value==='+'}" @click="selectType('+')">收入</li>
     </ul>
   </div>
 </template>
@@ -14,7 +16,8 @@ import {Component, Prop} from 'vue-property-decorator'
 
 @Component//告诉下面的是组件
 export default class Types extends Vue  {
-  @Prop()readonly value!:string;
+  @Prop(String)readonly value!:string;
+  @Prop(String)classPrefix?: string
  /* type = '-';//'-'表示支出，'+'表示收入   删掉了，主组件传了默认的值*/
 
 
