@@ -5,11 +5,7 @@ import createId from "@/lib/createId";
 import router from "@/router";
 
 Vue.use(Vuex)//把store绑到Vue.prototype上
-type RootState = {
-    recordList: RecordItem[],
-    tagList: Tag[],
-    currentTag?: Tag,
-}
+
 
 const store = new Vuex.Store({
     state: {
@@ -24,7 +20,7 @@ const store = new Vuex.Store({
         },
         createRecord(state, record) {
             const deepClone: RecordItem = clone(record)
-            deepClone.createdAt = new Date()
+            deepClone.createdAt = new Date().toISOString()
             state.recordList.push(deepClone)//地址不变，所以push进去还是原来的东西，所以得深拷贝赋值给新的参数
             store.commit('saveRecords')
             /*  recordStore.saveRecords()*/

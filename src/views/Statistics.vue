@@ -1,45 +1,110 @@
 <template>
   <Layout>
-    <Tabs class-prefix="type" :data-sourse="array2" :value.sync="yyy"/>
-    <Tabs class-prefix="interval" :data-sourse="array" :value.sync="hhh"/>
+    <Tabs class-prefix="type" :data-sourse="recordTypeList" :value.sync="type"/>
+    <Tabs class-prefix="interval" :data-sourse="intervalList" :value.sync="interval" height="48px"/>
+    <ol>
+      <li v-for="(group,index) in result" :key="index">
+        <h3 class="title">{{ group.title }}</h3>
+        <ol>
+          <li v-for="item in group.items" :key="item.id"
+              class="record"
+          >
+            <span>{{ tagString(item.tags) }}</span>
+            <span class="notes">{{item.notes}}</span>
+            <span> ￥{{ item.amount }} </span>
+          </li>
+        </ol>
+      </li>
+    </ol>
   </Layout>
 </template>
+<style scoped lang="scss">
+%item {
+  padding: 8px 16px;
+  line-height: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
 
+.title {
+  @extend %item
+}
+
+.record {
+  background: white;
+  @extend %item
+}
+.notes {
+  margin-right: auto;
+  margin-left: 16px;
+  color: #999;
+}
+</style>
 <script lang="ts">
 
-import Types from "@/components/Money/Types.vue";
 import Component from "vue-class-component";
 import Vue from "vue";
 import Tabs from "@/components/Tabs.vue";
+import intervalList from "@/constants/intervalList";
+import recordTypeList from "@/constants/recordTypeList";
 
 @Component({
-  components: {Tabs, Types},
+  components: {Tabs},
 })
 export default class Statistics extends Vue {
-  yyy = '-'
-  hhh = 'day'
-  array = [
-    {text: '按天', value: 'day'},
-    {text: '按周', value: 'week'},
-    {text: '按月', value: 'month'}
-  ]
-  array2 = [
-    {text: '支出', value: '-'},
-    {text: '收入', value: '+'},
-  ]
+  // eslint-disable-next-line no-undef
+  tagString(tags: Tag[]) {
+    return tags.length === 0 ? '无' : tags.join(',')
+  }
+
+  get recordList() {
+    // eslint-disable-next-line no-undef
+    return (this.$store.state as RootState).recordList
+  }
+
+  get result() {
+    const {recordList} = this
+    // eslint-disable-next-line no-undef
+    type HashTableValue = { title: string, items: RecordList[] }
+    // eslint-disable-next-line no-undef
+    const hashTable: { [key: string]: HashTableValue } = {}
+    for (let i = 0; i < recordList.length; i++) {
+      const [date, time] = recordList[i].createdAt!.split('T')
+      hashTable[date] = hashTable[date] || {title: date, items: []} //初始化
+      hashTable[date].items.push(recordList[i])
+
+    }
+    return hashTable
+  }
+
+  beforeCreate() {
+    this.$store.commit('fetchRecords')
+  }
+
+  type = '-'
+  interval = 'day'
+  intervalList = intervalList
+  recordTypeList = recordTypeList
 }
 </script>
 
 <style lang="scss" scoped>
-::v-deep .type-item {
-  background: #c4c4c4;
-
-  &.selected {
+::v-deep {
+  .type-tabs-item {
     background: white;
 
-    &::after {
-      display: none;
+    &.selected {
+      background: #c4c4c4;
+
+      &::after {
+        display: none;
+      }
     }
   }
+
+  /*  .interval-tabs-item {
+      height: 48px;
+    }*/
 }
 </style>

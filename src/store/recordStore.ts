@@ -14,7 +14,7 @@ const recordStore ={
     createRecord(record: RecordItem){
         const deepClone: RecordItem = clone(record)
 
-        deepClone.createdAt = new Date()
+        deepClone.createdAt = new Date().toISOString()
         this.recordList?.push(deepClone)//地址不变，所以push进去还是原来的东西，所以得深拷贝赋值给新的参数
         recordStore.saveRecords()
     },

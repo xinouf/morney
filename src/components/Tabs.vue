@@ -1,10 +1,12 @@
 <template>
-  <ul class="tabs">
-   <li v-for="item in dataSourse" :key="item.value"
-       :class="{selected: item.value=== value, [classPrefix+'-tabs-item']:classPrefix}"
-   @click="select(item)">{{item.text}}
+  <ul class="tabs" :class="{[classPrefix+'-tabs']:classPrefix}">
+    <li v-for="item in dataSourse" :key="item.value"
+        class="tabs-item"
+        :class="liClass(item)"
+        :style="{height: height}"
+        @click="select(item)">{{ item.text }}
 
-   </li>
+    </li>
   </ul>
 </template>
 
@@ -12,16 +14,21 @@
 import Vue from "vue";
 import {Component, Prop} from "vue-property-decorator";
 
-type DateSourceItem = {text:string, value:string}
+type DateSourceItem = { text: string, value: string }
 @Component
-export default class Tabs extends Vue{
-@Prop({required:true,type:Array})
-  dataSourse!:DateSourceItem[]
-@Prop(String)readonly value!:string
-@Prop(String)classPrefix?: string
+export default class Tabs extends Vue {
+  @Prop({required: true, type: Array})
+  dataSourse!: DateSourceItem[]
+  @Prop(String) readonly value!: string
+  @Prop(String) classPrefix?: string
+  @Prop({type: String, default: '64px'}) height!: string
 
-  select(item:DateSourceItem){
-this.$emit('update:value',item.value)
+  liClass(item: DateSourceItem) {
+    return {[this.classPrefix + '-tabs-item']: this.classPrefix, selected: item.value === this.value}
+  }
+
+  select(item: DateSourceItem) {
+    this.$emit('update:value', item.value)
   }
 }
 </script>
@@ -33,9 +40,11 @@ this.$emit('update:value',item.value)
   text-align: center;
   font-size: 24px;
 
-  li {
+  &-item { //只有一个选择器的优先级会低点
     width: 50%;
-    height: 64px; /*固定，防止其他padding等把它撑大*/
+    /*
+        height: 64px; !*固定，防止其他padding等把它撑大*!
+    */
     display: flex;
     align-items: center; /*对于居中，最好用这个*/
     justify-content: center;

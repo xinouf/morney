@@ -3,7 +3,7 @@ type RecordItem = {//类型声明，不需要告诉值
     notes: string
     type: string
     amount: number//数据类型
-    createdAt?: Date//类/构造函数  创建时间
+    createdAt?: string//类/构造函数  创建时间
 }/*不用声明，下面的可以反推，但最好不要省*/
 type Tag = {
     id: string
@@ -17,6 +17,11 @@ type TagListModel = {
     remove:(id:string)=>boolean
     save: () => void
 }
-interface Window {
+type RootState = {
+    recordList: RecordItem[],
+    tagList: Tag[],
+    currentTag?: Tag,
+}
+interface Window{
 
 }
