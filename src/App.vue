@@ -16,6 +16,10 @@ body {
   font-family: $font-hei;
   background: #f5f5f5;
 }
+#app {
+  max-width: 500px;
+  margin: 0 auto;
+}
 /*
 .clearfix::after {记住：清除浮动就是这么写的
   content: '';
