@@ -13,7 +13,13 @@ Vue.component('Layout', Layout);
 Vue.component('Icon', Icon);
 /*object: Exclude<Tag, 'id'>*/
 new Vue({
-    router,
-    store,
+    router:router,
+    store:store,
     render: h => h(App)
 }).$mount('#app')
+
+window.onload =function () {
+    setTimeout(function (){
+        window.scrollTo(0,10000)
+    }, 0)
+}

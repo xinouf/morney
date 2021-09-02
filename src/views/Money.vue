@@ -7,9 +7,9 @@
     <!--    <Types :value="record.type" @update:value="onUpdateType"/>同上-->
     <!--    :value="record.type" 把默认的type值传给子组件，保持子组件和父亲的默认值一致，然后把子组件的type默认值删掉-->
     <div class="notes">
-      <FormItem field-name="备注" placeholder="在这里输入备注" @update:value="onUpdateNotes"/>
+      <FormItem field-name="备注" placeholder="在这里输入备注" :value.sync="record.notes"/>
     </div>
-    <Tags/>
+    <Tags @update:value="record.tags = $event"/>
     <!--    data-source代表props-->
   </Layout>
 </template>
@@ -39,13 +39,20 @@ get recordList(){
     this.record.notes = value
   }
   saveRecord() {
+  if (!this.record.tags || this.record.tags.length === 0){
+    return window.alert('请至少选择一个标签')
+  }
     this.$store.commit('createRecord', this.record)
+    if(this.$store.state.createRecordError === null){
+      window.alert('已保存')
+      this.record.notes = ''
+    }
   }
 
 }
 </script>
 <style lang="scss" scoped>
-.layout-content {
+::v-deep .layout-content {
   display: flex;
   flex-direction: column-reverse; /*从最下面开始布局*/
 }
